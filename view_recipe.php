@@ -10,8 +10,12 @@
 <?php
 require_once('credentials.php');
 require_once('recipe_database.php');
-include "header.php" ;
 $db = db_connect();
+session_start();
+if (isset($_SESSION['valid_user_id'])) {
+  include "mheader.php" ;}else {
+    include "header.php" ;
+  }
 //access URL parameter
 $id = $_GET['RecipeID'] ;
 

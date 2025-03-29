@@ -1,70 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
-<?php
-// ALTER THIS
-session_start();
-$users = array("Grace", "Mia", "Orange"); //use datbase
-$pass = array("xxxx", "yyyy", "zzzz");
-if (isset($_POST['userid']) && isset($_POST['password'])) {
-    // if the user has just tried to log in
-    $userid = $_POST['userid'];
-    $password = $_POST['password'];
-
-    //validate existance of the user and passward here(lookin for index), you can use datanase query here
-    $key_u = array_search($userid, $users); //you can use query here
-    $key_p = array_search($password, $pass);//returen the key 
-    if ($key_u > -1 && $key_p > -1) { //if exist in the array
-        $_SESSION['valid_user'] = $userid; //create session variable
-        $_SESSION['valid_pass'] = $password; //create another session variable
-        header("Location: membersOnly.php"); //redirect the user to the main page
-    }
-}
-
-?> 
-<!-- ALTER THIS SHIZ -->
-
-
-<head>
-    <link rel="stylesheet" media="all" href="style.css"/>
-    <title>Login</title>
-</head>
-<body>
 <?php require_once('credentials.php');
 require_once('recipe_database.php');
 include 'header.php'; 
-$db = db_connect();?>
+$db = db_connect();
 
-<?php
-    if (isset($_SESSION['valid_user'])) {
-        echo '<p>You are logged in as: ' . $_SESSION['valid_user'] . ' <br />';
-        echo "<br>";
-        echo "<br>";
+session_start();
 
-        echo "session ID is " . session_id();
-        echo "<br>";
-        echo "<br>";
-        echo '<a href="logout.php">Log out</a></p>';
-    } else {
-        if (isset($userid)) {
-            // if they've tried and failed to log in
-            echo '<p>Could not log you in.</p>';
+if (isset($_POST['UserName']) && isset($_POST['Password'])) {
+    // Sanitize user input using mysqli_real_escape_string
+    $username = mysqli_real_escape_string($db, $_POST['UserName']);
+    $password = mysqli_real_escape_string($db, $_POST['Password']);
+    
+    // Create SQL query with sanitized inputs
+    $sql = "SELECT * FROM USER WHERE UserName = '$username' AND Password = '$password'";
+
+    // Run the query
+    $result = mysqli_query($db, $sql);
+
+    // Check if the query was successful
+    if ($result) {
+        // Check if a matching user is found
+        if (mysqli_num_rows($result) > 0) {
+          
+            $row = mysqli_fetch_assoc($result);
+            $_SESSION['valid_user_id'] = $row['UserID'];
+            $_SESSION['valid_user_name'] = $username;
+            header("Location: index.php"); // Redirect to members-only page
+            exit;
         } else {
-            // they have not tried to log in yet or have logged out
-            echo '<p>You are not logged in.</p>';
-            
+            // Invalid login credentials
+            echo "<p>Invalid username or password.</p>";
         }
-    } ?>
+    } else {
+        echo "Error: " . mysqli_error($db);
+    }
+    
+    // Close the result set
+    mysqli_free_result($result);
+}
+
+// Close the database connection
+mysqli_close($db);
+?>
     <!-- Alter so if logged in hides form to log in  -->
 
     <!-- provide form to log in -->
 <form action="login_form.php" method="post">
         <fieldset>
             <legend>Login Now!</legend>
-            <p><label for="userid">UserID:</label>
-                <input type="text" name="userid" id="userid" size="30" />
+            <p><label for="UserName">User Name:</label>
+                <input type="text" name="UserName" id="UserName" size="30" />
             </p>
-            <p><label for="password">Password:</label>
-                <input type="password" name="password" id="password" size="30" />
+            <p><label for="Password">Password:</label>
+                <input type="Password" name="Password" id="Password" size="30" />
             </p>
         </fieldset>
         <button type="submit" name="login">Login</button>

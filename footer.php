@@ -6,7 +6,7 @@
 </head>
 <footer>
     <div class="author">
-        <p>Formatting and code by name</p>
+      
         <p>&copy; 2025 copyright</p>
         <nav>
             <a href="./index.html">[ top ]</a>
