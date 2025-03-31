@@ -11,7 +11,7 @@ html, body {
     margin: 0;
     height: 100%;
     background-color: #eee;
-    color: #fff;
+    color: black;
     font-family: 'Onest', sans-serif;
 }
 
@@ -21,6 +21,7 @@ body {
 }
 
 h1, p {
+  
     text-align: center;
 }
 
@@ -370,6 +371,9 @@ footer a:visited {
 
 .back-button a:hover {
     text-decoration: underline;
+}
+.plaintext{
+    color: black;
 }
 
 @media (max-width: 768px) {

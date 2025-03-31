@@ -7,13 +7,25 @@
 </head>
 <body>
 
-<?php include ("header.php") ?>
+<?php
+session_start();
+
+// Check if the user is logged in
+if (isset($_SESSION['valid_user_id'])) {
+    // If logged in, include mheader.php
+    include 'mheader.php';
+} else {
+    // If not logged in, include header.php
+    include 'header.php';
+}
+?>
 
 <?php
 require_once('credentials.php');
 require_once('recipe_database.php');
 
 $db = db_connect(); 
+
 ?>
 
 <?php 
@@ -72,11 +84,17 @@ $num_rows = mysqli_num_rows($result_set);
                             <a href="<?php echo"view_recipe.php?RecipeID=" . $results['RecipeID']; ?>">View</a>
                             <a href="<?php echo"edit_recipe.php?RecipeID=" . $results['RecipeID']; ?>">Edit</a>
                             <a href="<?php echo"delete_recipe.php?RecipeID=" . $results['RecipeID']; ?>">Delete</a>
+                            
+                            <?php if (isset($_SESSION['valid_user_id'])) { ?>                  
+                                <a href="add_favorite.php?RecipeID=<?php echo $results['RecipeID']; ?>&UserID=<?php echo $_SESSION['valid_user_id']; ?>">Add to Favorites</a>
+                            <?php } ?>
                         </td> 
                     </tr>   
                 <?php } ?> 
                 </table>
-                <div class="new"><a class="action" href="new_recipe.php">Create New Recipe</a></div>  
+                <?php if (isset($_SESSION['valid_user_id'])) { ?>   
+                <div class="new"><a class="action" href="new_recipe.php">Create New Recipe</a></div> 
+                <?php } ?> 
                 </div>
             <div class="container">
                 <article id="login">
@@ -88,7 +106,7 @@ $num_rows = mysqli_num_rows($result_set);
                     <p>not a member yet? click <a class="action" href="registrationform.php">here</a> to join and enjoy member-exclusive perks!</p>
                 </article>
             </div>
-        </div>            
+                    
 </div>
 
 <?php include("footer.php"); ?>
